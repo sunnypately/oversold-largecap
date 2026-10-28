@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oversold Large-Cap Growth Monitor</title>
+<style>
+:root {
+  --bg: #f9f9f7; --panel: #ffffff; --panel2: #fcfcfb; --line: rgba(11,11,11,.10); --line-strong: rgba(11,11,11,.18);
+  --fg: #0b0b0b; --fg2: #52514e; --muted: #6d6b67; --hover: #f4f4f1;
+  --ok: #006300; --ok-bg: #e0f2de; --warn: #734500; --bad: #8e2626; --bad-bg: #fae7e7;
+  --accent: #184f95; --accent-bg: #e2eefa; --ai: #184f95; --other: #c2702a;
+  --grid: rgba(11,11,11,.08); --axis: rgba(11,11,11,.28);
+  --radius: 6px;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --serif: ui-serif, Georgia, "Times New Roman", serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1280px; margin: 0 auto; padding: 32px 16px 48px; }
+header h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(24px, 3.6vw, 32px); margin: 0 0 8px; letter-spacing: -0.01em; }
+header h1 span { color: inherit; }
+.take { color: var(--muted); max-width: 72ch; margin: 0 0 12px; font-size: 14px; }
+.take b { color: var(--fg); font-weight: 600; }
+.status { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; font-size: 12px; color: var(--muted); }
+.dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--muted); margin-right: 6px; vertical-align: middle; }
+.dot.live { background: var(--ok); }
+.dot.stale { background: #b07a1f; }
+.btn { font: inherit; font-size: 12px; background: var(--panel); color: var(--fg); border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 5px 12px; cursor: pointer; }
+.btn:hover { background: var(--hover); }
+.tabs { display: flex; flex-wrap: wrap; gap: 4px; margin: 24px 0 16px; border-bottom: 1px solid var(--line); }
+.tabs button { font: inherit; font-size: 14px; background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted); padding: 8px 14px; cursor: pointer; }
+.tabs button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--fg); font-weight: 500; }
+.tabs button:focus-visible, th button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.page[hidden] { display: none; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 176px), 1fr)); gap: 12px; margin-bottom: 12px; }
+.tile, .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; min-width: 0; }
+.lbl { font-size: 12px; color: var(--muted); }
+.num { font-family: var(--serif); font-size: 26px; margin-top: 6px; font-variant-numeric: tabular-nums; }
+.sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 12px; margin-bottom: 12px; }
+.card h2 { font-size: 15px; font-weight: 500; margin: 0 0 4px; }
+.note { font-size: 12px; color: var(--muted); margin: 0 0 14px; }
+.chart { position: relative; }
+.chart svg { display: block; width: 100%; height: auto; }
+.chart text { font-family: var(--sans); }
+.tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius); box-shadow: 0 4px 16px rgba(0,0,0,.08); padding: 6px 9px; font-size: 12px; z-index: 5; max-width: 240px; display: none; }
+.tip .h { color: var(--fg2); margin-bottom: 2px; }
+.tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 10px; }
+.tools input { font: inherit; background: var(--panel); color: var(--fg); border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 6px 10px; min-width: min(100%, 240px); }
+.tools span { font-size: 12px; color: var(--muted); }
+.tablebox { overflow: auto; max-height: 680px; border: 1px solid var(--line); border-radius: var(--radius); }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 13px; }
+th { position: sticky; top: 0; background: var(--panel2); z-index: 1; text-align: right; font-weight: 500; color: var(--muted); font-size: 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th button { font: inherit; color: inherit; background: none; border: 0; padding: 9px 10px; cursor: pointer; width: 100%; text-align: inherit; }
+th.l, td.l { text-align: left; }
+th[aria-sort] button { color: var(--fg); }
+td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr.row { cursor: pointer; }
+tbody tr.row:hover td { background: var(--hover); }
+td.sym { color: var(--fg); font-weight: 600; }
+td.reason { white-space: normal; min-width: 220px; }
+.pos { color: var(--ok); } .neg { color: var(--bad); }
+.sig { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 500; }
+.sig.deep { color: var(--ok); background: var(--ok-bg); }
+.sig.disc { color: var(--ok); background: #f0f8ef; }
+.sig.near { color: var(--fg2); background: #f0efec; }
+.sig.prem { color: var(--bad); background: var(--bad-bg); }
+tr.detail td { background: var(--panel2); white-space: normal; text-align: left; padding: 16px; }
+.dgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 18px; }
+.dgrid h4 { margin: 0 0 6px; font-size: 12px; color: var(--muted); font-weight: 500; }
+.dgrid p { margin: 0 0 6px; }
+.kv { display: grid; grid-template-columns: auto auto; gap: 2px 14px; justify-content: start; }
+.kv span:nth-child(odd) { color: var(--muted); }
+.prose { max-width: 80ch; }
+.prose h3 { font-size: 13px; color: var(--fg); margin: 18px 0 6px; font-weight: 600; }
+.prose p { margin: 0 0 10px; color: var(--fg2); }
+.prose b { color: var(--fg); }
+footer { margin-top: 32px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+.err { color: var(--bad); }
+@media (max-width: 640px) { .hide-sm { display: none; } td.reason { min-width: 160px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Oversold large-cap growth monitor</h1>
+    <p class="take" id="take">Loading…</p>
+    <div class="status">
+      <span><span class="dot" id="qdot"></span><span id="qstat">Connecting to live quotes…</span></span>
+      <span id="fstat"></span>
+      <button class="btn" id="refresh">Refresh prices</button>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-page="All" aria-selected="true">All large caps</button>
+    <button role="tab" data-page="AI" aria-selected="false">AI-linked</button>
+    <button role="tab" data-page="Other" aria-selected="false">Other sectors</button>
+    <button role="tab" data-page="method" aria-selected="false">Method</button>
+  </nav>
+
+  <section class="page" id="page-list"></section>
+
+  <section class="page" id="page-method" hidden>
+    <div class="grid" style="grid-template-columns: 1fr">
+      <div class="card prose">
+        <h2>How the screen and fair value work</h2>
+        <h3>The screen</h3>
+        <p>A stock is on the screen when its latest-quarter revenue is up at least <b>20%</b> from a year earlier, it trades at least <b>25%</b> below its 52-week high, and it is worth at least <b>$10B</b> — the Oversold Growth Monitor’s rule limited to large caps. The universe is the Russell 1000 plus an AI watchlist; pre-revenue names are left off. The list is ranked by the gap to fair value.</p>
+        <h3>Fair value: three lenses, blended</h3>
+        <p><b>Earnings (45%).</b> Forward EPS times a fair P/E that depends on the business. Secular growers: 15 + 0.25 × revenue growth, bounded 15–45x. Semiconductor equipment: 15 + 0.2 × growth, capped at 28x for the equipment cycle. Servers and contract manufacturers: 14x. Memory and storage: valued on mid-cycle earnings rather than today’s peak. Power producers: 20x.</p>
+        <p><b>Sales (25%).</b> Only for growth names without positive earnings. Fair price/sales = 2 + 0.12 × growth (capped at 100%), scaled by gross margin and current profitability; halved for asset-heavy AI cloud and data-center operators, with CoreWeave’s debt subtracted.</p>
+        <p><b>Street consensus (30%).</b> The mean analyst price target.</p>
+        <p>Weights renormalize when a lens doesn’t apply. Upside = fair value ÷ live price − 1. Signals: at least 40% deep discount, at least 15% discount, −10% to 15% near fair, below −10% premium. Confidence is High when both earnings and street targets exist, Medium with any two lenses, Low with one.</p>
+        <h3>Limits</h3>
+        <p>Debt is mostly ignored. Peak-cycle earnings in memory, semiconductor equipment and hardware can make a stock look cheaper than it is, and much of this list rides the same AI spending cycle. Fair values are a starting point for research, not price targets, and not investment advice.</p>
+        <h3>Refresh</h3>
+        <p>Prices are live from Finnhub on page load and every 5 minutes while the page is open. The ticker list, fundamentals and fair values are rebuilt each NYSE trading day before the open; market holidays are skipped. This copy shows the list as of the date at the top until its data files are replaced.</p>
+      </div>
+    </div>
+    <div class="card">
+        <h2>Not on the screen</h2>
+        <p class="note">Large caps checked at the last refresh that grow revenue less than 20% a year, aren’t 25% off their high or lack the data to value them, plus growth-screen names just under $10B.</p>
+        <div class="tablebox"><table><thead><tr>
+          <th class="l">Ticker</th><th class="l hide-sm">Segment</th><th>Off high</th><th class="l">Why it’s not on the screen</th>
+        </tr></thead><tbody id="not-body"></tbody></table></div>
+    </div>
+  </section>
+
+  <footer id="foot">Research tooling, not investment advice.</footer>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+(() => {
+  'use strict';
+  const FINNHUB_KEY = 'd7g12c1r01qqb8rhuptgd7g12c1r01qqb8rhupu0';
+  const GROUPS = { All: null, AI: 'AI-linked', Other: 'Other sectors' };
+  const TITLES = { All: 'All large caps', AI: 'AI-linked', Other: 'Other sectors' };
+  const COLOR = { 'AI-linked': 'var(--ai)', 'Other sectors': 'var(--other)' };
+
+  let rows = [], notRows = [], live = {}, liveOk = false, current = 'All';
+  const st = { sort: 'upside', dir: -1, q: '', open: null };
+
+  /* ---------- formatting ---------- */
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const F = {
+    pct: (v, d = 0) => { if (v == null || !isFinite(v)) return '—'; const t = Math.abs(v * 100).toFixed(d); return (+t === 0 ? '' : v > 0 ? '+' : '−') + t + '%'; },
+    pctU: (v, d = 0) => (v == null || !isFinite(v)) ? '—' : (v < 0 ? '−' : '') + Math.abs(v * 100).toFixed(d) + '%',
+    usd: (v) => { if (v == null || !isFinite(v)) return '—'; return '$' + (v >= 1000 ? v.toLocaleString('en-US', { maximumFractionDigits: 0 }) : v.toFixed(v < 10 ? 2 : v < 100 ? 2 : 0)); },
+    b: (v) => (v == null || !isFinite(v)) ? '—' : (v >= 1 ? '$' + v.toFixed(1) + 'B' : '$' + Math.round(v * 1000) + 'M'),
+    x: (v) => (v == null || !isFinite(v)) ? '—' : v.toFixed(1) + 'x',
+  };
+  const median = (a) => { const s = a.filter((v) => v != null && isFinite(v)).sort((x, y) => x - y); if (!s.length) return null; const m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+  const signal = (u) => u >= 0.4 ? ['deep', 'Deep discount'] : u >= 0.15 ? ['disc', 'Discount'] : u >= -0.1 ? ['near', 'Near fair'] : ['prem', 'Premium'];
+
+  /* ---------- derived rows ---------- */
+  function derive() {
+    return rows.map((f) => {
+      const q = live[f.symbol];
+      const price = q && q.c > 0 ? q.c : f.snapshot_price;
+      const prev = q && q.pc > 0 ? q.pc : null;
+      return { ...f, price, chg: prev ? price / prev - 1 : null, isLive: !!(q && q.c > 0),
+        drawdown: price / f.high_52w - 1, upside: f.fair_value / price - 1,
+        lowUp: f.fair_low / price - 1, highUp: f.fair_high / price - 1 };
+    });
+  }
+  const inGroup = (r, g) => !GROUPS[g] || r.group === GROUPS[g];
+
+  /* ---------- header ---------- */
+  function renderTake(all) {
+    const deep = all.filter((r) => r.upside >= 0.4).length;
+    const mAll = median(all.map((r) => r.upside));
+    const mOil = median(all.filter((r) => r.group === 'AI-linked').map((r) => r.upside));
+    const mPow = median(all.filter((r) => r.group === 'Other sectors').map((r) => r.upside));
+    document.getElementById('take').innerHTML =
+      `<b>${all.length}</b> companies worth $10B or more, growing revenue at least 20% a year, trade at least 25% below their 52-week high. ` +
+      `<b>${deep}</b> of them sit at least 40% below model fair value, and the median name is <b>${F.pct(mAll)}</b> from fair value. ` +
+      `AI-linked median: <b>${F.pct(mOil)}</b>; other sectors median: <b>${F.pct(mPow)}</b>.`;
+  }
+
+  /* ---------- list page ---------- */
+  function renderList() {
+    const all = derive();
+    renderTake(all);
+    const data = all.filter((r) => inGroup(r, current));
+    const el = document.getElementById('page-list');
+    const deep = data.filter((r) => r.upside >= 0.4).length;
+    el.innerHTML = `
+      <div class="tiles">
+        <div class="tile"><div class="lbl">Names on the screen</div><div class="num">${data.length}</div><div class="sub">$10B+, revenue +20% y/y, 25%+ off high</div></div>
+        <div class="tile"><div class="lbl">Median gap to fair value</div><div class="num">${F.pct(median(data.map((r) => r.upside)))}</div><div class="sub">Fair value vs. live price</div></div>
+        <div class="tile"><div class="lbl">Deep discounts</div><div class="num">${deep}</div><div class="sub">Fair value at least 40% above price</div></div>
+        <div class="tile"><div class="lbl">Median off high</div><div class="num">${F.pctU(median(data.map((r) => r.drawdown)))}</div><div class="sub">From the 52-week high</div></div>
+        <div class="tile"><div class="lbl">Median revenue growth</div><div class="num">${F.pct(median(data.map((r) => r.rev_growth)))}</div><div class="sub">Latest quarter vs. a year ago</div></div>
+      </div>
+      <div class="grid">
+        <div class="card"><h2>Fundamental value vs. price${current === 'All' ? '' : ' — ' + esc(TITLES[current].toLowerCase())}</h2><p class="note">Upside (or downside) from the live price to model fair value. Whiskers span the most and least generous valuation lens.</p><div class="chart" id="ladder"></div></div>
+        <div class="card"><h2>Growth vs. sell-off</h2><p class="note">Revenue growth against distance from the 52-week high. Bigger dots = larger gap to fair value.</p><div class="chart" id="scatter"></div></div>
+      </div>
+      <div class="card">
+        <h2>Screen results</h2>
+        <p class="note">Click a row for its notes and valuation lenses. Click a column to sort.</p>
+        <div class="tools"><input type="search" id="q" placeholder="Search ticker, name, theme" value="${esc(st.q)}"><span id="count"></span></div>
+        <div class="tablebox"><table><thead><tr id="thead"></tr></thead><tbody id="tbody"></tbody></table></div>
+      </div>`;
+    const q = document.getElementById('q');
+    q.addEventListener('input', () => { st.q = q.value.toLowerCase(); renderTable(data); });
+    drawLadder(document.getElementById('ladder'), data);
+    drawScatter(document.getElementById('scatter'), data);
+    renderTable(data);
+  }
+
+  const COLS = [
+    ['symbol', 'Ticker', 'l'], ['name', 'Company', 'l hide-sm'], ['theme', 'Theme', 'l hide-sm'],
+    ['price', 'Price', ''], ['chg', 'Today', 'hide-sm'], ['drawdown', 'Off high', ''], ['rev_growth', 'Rev growth', ''],
+    ['fair_value', 'Fair value', ''], ['upside', 'Upside', ''], ['signal', 'Signal', 'l'], ['confidence', 'Conf.', 'l hide-sm'],
+  ];
+  function cell(r, k) {
+    switch (k) {
+      case 'price': return F.usd(r.price) + (r.isLive ? '' : '*');
+      case 'chg': return `<span class="${r.chg > 0 ? 'pos' : r.chg < 0 ? 'neg' : ''}">${F.pct(r.chg, 1)}</span>`;
+      case 'drawdown': return F.pctU(r.drawdown);
+      case 'rev_growth': return F.pct(r.rev_growth);
+      case 'fair_value': return F.usd(r.fair_value);
+      case 'upside': return `<span class="${r.upside > 0 ? 'pos' : 'neg'}">${F.pct(r.upside)}</span>`;
+      case 'signal': { const [c, t] = signal(r.upside); return `<span class="sig ${c}">${t}</span>`; }
+      default: return esc(r[k]);
+    }
+  }
+  function renderTable(data) {
+    const th = document.getElementById('thead');
+    th.innerHTML = COLS.map(([k, t, c]) => `<th class="${c}" ${st.sort === k ? `aria-sort="${st.dir > 0 ? 'ascending' : 'descending'}"` : ''}><button data-k="${k}">${t}${st.sort === k ? (st.dir > 0 ? ' ▲' : ' ▼') : ''}</button></th>`).join('');
+    th.querySelectorAll('button').forEach((b) => b.onclick = () => {
+      const k = b.dataset.k; const key = k === 'signal' ? 'upside' : k;
+      if (st.sort === key) st.dir *= -1; else { st.sort = key; st.dir = ['symbol', 'name', 'theme', 'confidence'].includes(key) ? 1 : -1; }
+      renderTable(data);
+    });
+    const list = data.filter((r) => !st.q || (r.symbol + ' ' + r.name + ' ' + r.theme + ' ' + r.segment).toLowerCase().includes(st.q))
+      .sort((a, b) => { const x = a[st.sort], y = b[st.sort]; if (x == null) return 1; if (y == null) return -1; return (typeof x === 'string' ? x.localeCompare(y) : x - y) * st.dir; });
+    document.getElementById('count').textContent = `${list.length} of ${data.length} names`;
+    const tb = document.getElementById('tbody');
+    tb.innerHTML = list.map((r) => `<tr class="row" data-s="${esc(r.symbol)}">${COLS.map(([k, , c]) => `<td class="${c}${k === 'symbol' ? ' sym' : ''}">${cell(r, k)}</td>`).join('')}</tr>` +
+      (st.open === r.symbol ? `<tr class="detail"><td colspan="${COLS.length}">${detail(r)}</td></tr>` : '')).join('');
+    tb.querySelectorAll('tr.row').forEach((tr) => tr.onclick = () => { st.open = st.open === tr.dataset.s ? null : tr.dataset.s; renderTable(data); });
+  }
+  function detail(r) {
+    const lens = [['Earnings', r.fair_earnings], ['Sales', r.fair_sales], ['Street target', r.analyst_target]];
+    return `<div class="dgrid">
+      <div><h4>${esc(r.name)} · ${esc(r.theme)}</h4><p>${esc(r.note)}</p>${r.model_note ? `<p style="color:var(--muted)">${esc(r.model_note)}</p>` : ''}</div>
+      <div><h4>Valuation lenses</h4><div class="kv">${lens.map(([k, v]) => `<span>${k}</span><span>${F.usd(v)}${v ? ' (' + F.pct(v / r.price - 1) + ')' : ''}</span>`).join('')}
+        <span>Blended fair value</span><span style="font-weight:600">${F.usd(r.fair_value)}</span><span>Confidence</span><span>${esc(r.confidence)}</span></div></div>
+      <div><h4>Fundamentals</h4><div class="kv">
+        <span>Revenue run-rate</span><span>${F.b(r.runrate_rev_b)} (${r.rev_basis === 'ttm' ? 'TTM' : 'qtr × 4'})</span>
+        <span>Gross margin</span><span>${F.pctU(r.gross_margin)}</span><span>Net margin (TTM)</span><span>${F.pctU(r.net_margin_ttm)}</span>
+        <span>Forward P/E</span><span>${F.x(r.fwd_pe)}</span><span>Market cap</span><span>${F.b(r.snapshot_mcap_b)}</span>
+        <span>52-week high</span><span>${F.usd(r.high_52w)}</span>
+        <span>Analysts</span><span>${r.analyst_buy ?? 0} buy · ${r.analyst_hold ?? 0} hold · ${r.analyst_sell ?? 0} sell</span></div></div>
+    </div>`;
+  }
+
+  /* ---------- charts (plain SVG) ---------- */
+  const tip = document.getElementById('tip');
+  function showTip(host, ev, title, lines) {
+    tip.innerHTML = `<div class="h">${esc(title)}</div>` + lines.map(([k, v]) => `<div>${esc(k)}: <b>${esc(v)}</b></div>`).join('');
+    tip.style.display = 'block';
+    const pad = 12, w = tip.offsetWidth, h = tip.offsetHeight;
+    let x = ev.clientX + pad, y = ev.clientY + pad;
+    if (x + w > window.innerWidth - 8) x = ev.clientX - w - pad;
+    if (y + h > window.innerHeight - 8) y = ev.clientY - h - pad;
+    tip.style.left = (x + window.scrollX) + 'px'; tip.style.top = (y + window.scrollY) + 'px';
+  }
+  const hideTip = () => { tip.style.display = 'none'; };
+  const NS = 'http://www.w3.org/2000/svg';
+  const mk = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+  function drawLadder(host, data) {
+    const d = data.slice().sort((a, b) => b.upside - a.upside);
+    const W = Math.max(320, host.clientWidth || 600), rowH = 22, mt = 22, mb = 10, ml = 58, mr = 46;
+    const H = mt + d.length * rowH + mb;
+    const lo = Math.min(-0.25, ...d.map((r) => r.lowUp)), hi = Math.max(0.5, ...d.map((r) => Math.min(r.highUp, 4)));
+    const x = (v) => ml + (clamp(v, lo, hi) - lo) / (hi - lo) * (W - ml - mr);
+    const svg = mk('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%' });
+    for (const t of (W < 500 ? [0, 1, 2, 3, 4] : [-0.5, 0, 0.5, 1, 2, 3, 4])) { if (t < lo || t > hi) continue;
+      mk('line', { x1: x(t), x2: x(t), y1: mt - 6, y2: H - mb, stroke: t === 0 ? 'rgba(11,11,11,.32)' : 'rgba(11,11,11,.08)', 'stroke-dasharray': t === 0 ? '' : '2 3' }, svg);
+      mk('text', { x: x(t), y: 12, 'text-anchor': 'middle', 'font-size': 10, fill: '#6d6b67' }, svg).textContent = F.pct(t); }
+    d.forEach((r, i) => {
+      const cy = mt + i * rowH + rowH / 2, g = mk('g', {}, svg);
+      mk('text', { x: ml - 8, y: cy, dy: '0.35em', 'text-anchor': 'end', 'font-size': 11, fill: '#0b0b0b' }, g).textContent = r.symbol;
+      mk('line', { x1: x(r.lowUp), x2: x(r.highUp), y1: cy, y2: cy, stroke: 'rgba(11,11,11,.32)', 'stroke-width': 1.5 }, g);
+      mk('line', { x1: x(0), x2: x(r.upside), y1: cy, y2: cy, stroke: COLOR[r.group], 'stroke-width': 7, 'stroke-opacity': 0.55 }, g);
+      mk('circle', { cx: x(r.upside), cy, r: 4, fill: COLOR[r.group] }, g);
+      mk('text', { x: x(Math.max(r.upside, r.highUp, 0)) + 6, y: cy, dy: '0.35em', 'font-size': 10, fill: '#6d6b67' }, g).textContent = F.pct(r.upside);
+      const hit = mk('rect', { x: 0, y: cy - rowH / 2, width: W, height: rowH, fill: 'transparent' }, g);
+      hit.addEventListener('mousemove', (ev) => showTip(host, ev, `${r.symbol} · ${r.name}`, [['Price', F.usd(r.price)], ['Fair value', F.usd(r.fair_value)], ['Upside', F.pct(r.upside)], ['Lens range', F.usd(r.fair_low) + ' – ' + F.usd(r.fair_high)]]));
+      hit.addEventListener('mouseleave', hideTip);
+    });
+    host.replaceChildren(svg);
+  }
+
+  function drawScatter(host, data) {
+    const d = data.filter((r) => r.rev_growth != null);
+    const W = Math.max(320, host.clientWidth || 600), H = Math.round(Math.min(380, W * 0.66)), m = { l: 46, r: 44, t: 14, b: 34 };
+    const gx = (v) => Math.sign(v) * Math.log1p(Math.abs(v) / 0.25);
+    const gmax = Math.max(1.5, ...d.map((r) => Math.min(r.rev_growth, 6)));
+    const x0 = gx(0.15), x1 = gx(gmax * 1.08);
+    const x = (v) => m.l + (gx(clamp(v, 0.15, gmax * 1.08)) - x0) / (x1 - x0) * (W - m.l - m.r);
+    const ylo = Math.min(-0.95, ...d.map((r) => r.drawdown)), yhi = -0.2;
+    const y = (v) => m.t + (yhi - v) / (yhi - ylo) * (H - m.t - m.b);
+    const rad = (u) => 4 + Math.sqrt(Math.max(u, 0)) * 7;
+    const svg = mk('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%' });
+    for (const t of [0.2, 0.5, 1, 2, 5]) { if (t > gmax * 1.08) continue;
+      mk('line', { x1: x(t), x2: x(t), y1: m.t, y2: H - m.b, stroke: 'rgba(11,11,11,.08)', 'stroke-dasharray': '2 3' }, svg);
+      mk('text', { x: x(t), y: H - m.b + 14, 'text-anchor': 'middle', 'font-size': 10, fill: '#6d6b67' }, svg).textContent = F.pct(t); }
+    for (const t of [-0.25, -0.5, -0.75]) { if (t < ylo) continue;
+      mk('line', { x1: m.l, x2: W - m.r, y1: y(t), y2: y(t), stroke: 'rgba(11,11,11,.08)', 'stroke-dasharray': '2 3' }, svg);
+      mk('text', { x: m.l - 6, y: y(t), dy: '0.35em', 'text-anchor': 'end', 'font-size': 10, fill: '#6d6b67' }, svg).textContent = F.pctU(t); }
+    mk('text', { x: W - m.r, y: H - 4, 'text-anchor': 'end', 'font-size': 10, fill: '#6d6b67' }, svg).textContent = 'Revenue growth y/y →';
+    mk('text', { x: m.l, y: m.t - 2, 'font-size': 10, fill: '#6d6b67' }, svg).textContent = '↓ further off 52-week high';
+    d.slice().sort((a, b) => b.upside - a.upside).forEach((r) => {
+      const cx = x(r.rev_growth), cy = y(r.drawdown), rr = rad(r.upside);
+      const c = mk('circle', { cx, cy, r: rr, fill: COLOR[r.group], 'fill-opacity': 0.35, stroke: COLOR[r.group] }, svg);
+      mk('text', { x: cx + rr + 3, y: cy, dy: '0.35em', 'font-size': 10, fill: '#0b0b0b' }, svg).textContent = r.symbol;
+      c.addEventListener('mousemove', (ev) => showTip(host, ev, `${r.symbol} · ${r.theme}`, [['Revenue growth', F.pct(r.rev_growth)], ['Off 52-week high', F.pctU(r.drawdown)], ['Upside to fair value', F.pct(r.upside)]]));
+      c.addEventListener('mouseleave', hideTip);
+    });
+    host.replaceChildren(svg);
+  }
+
+  /* ---------- not on screen ---------- */
+  function renderNot() {
+    document.getElementById('not-body').innerHTML = notRows.slice().sort((a, b) => a.off_high - b.off_high).map((r) =>
+      `<tr><td class="l sym">${esc(r.symbol)}</td><td class="l hide-sm">${esc(r.segment || '—')}</td><td>${F.pctU(Number(r.off_high))}</td><td class="l reason">${esc(r.reason)}</td></tr>`).join('');
+  }
+
+  /* ---------- tabs ---------- */
+  function show(page) {
+    current = page in GROUPS ? page : current;
+    document.querySelectorAll('.tabs button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.page === page)));
+    document.getElementById('page-list').hidden = page === 'method';
+    document.getElementById('page-method').hidden = page !== 'method';
+    if (page !== 'method') { st.open = null; renderList(); }
+    history.replaceState(null, '', '#' + page.toLowerCase());
+  }
+  document.querySelectorAll('.tabs button').forEach((b) => b.onclick = () => show(b.dataset.page));
+
+  /* ---------- live quotes (Finnhub) ---------- */
+  async function loadQuotes() {
+    const dot = document.getElementById('qdot'), stat = document.getElementById('qstat');
+    const res = await Promise.allSettled(rows.map((r) =>
+      fetch(`https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(r.symbol)}&token=${FINNHUB_KEY}`).then((x) => x.ok ? x.json() : Promise.reject(x.status))));
+    let n = 0;
+    res.forEach((p, i) => { if (p.status === 'fulfilled' && p.value && p.value.c > 0) { live[rows[i].symbol] = p.value; n++; } });
+    liveOk = n > 0;
+    dot.className = 'dot ' + (liveOk ? 'live' : 'stale');
+    stat.textContent = liveOk
+      ? `Live prices for ${n} of ${rows.length} names · ${new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`
+      : 'Live quotes unavailable — showing prices from the last refresh (marked *)';
+    renderTake(derive());
+    if (!document.getElementById('page-list').hidden) {
+      const ae = document.activeElement && document.activeElement.id === 'q';
+      renderList();
+      if (ae) { const q = document.getElementById('q'); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
+    }
+  }
+  document.getElementById('refresh').onclick = loadQuotes;
+
+  /* ---------- boot ---------- */
+  async function boot() {
+    try {
+      const v = Date.now();
+      const [a, b] = await Promise.all([
+        fetch('data/fundamentals.json?v=' + v).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }),
+        fetch('data/not_on_screen.json?v=' + v).then((r) => r.ok ? r.json() : []),
+      ]);
+      rows = a; notRows = b;
+    } catch (e) {
+      document.getElementById('take').innerHTML = '<span class="err">Couldn’t load data/fundamentals.json. Open this page from GitHub Pages (or a local web server), not as a file.</span>';
+      return;
+    }
+    const asof = rows.map((r) => r.asof).filter(Boolean).sort().pop();
+    document.getElementById('fstat').textContent = asof ? `Fundamentals as of ${asof}` : '';
+    renderNot();
+    const start = (location.hash || '#all').slice(1);
+    const page = { all: 'All', ai: 'AI', other: 'Other', method: 'method' }[start] || 'All';
+    if (page === 'method') renderTake(derive());
+    show(page);
+    loadQuotes();
+    setInterval(loadQuotes, 5 * 60 * 1000);
+    let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (!document.getElementById('page-list').hidden) renderList(); }, 150); });
+  }
+  boot();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,387 @@
+[
+ {
+  "symbol": "AMD",
+  "name": "Advanced Micro Devices",
+  "segment": "Semiconductors",
+  "off_high": -0.13,
+  "reason": "Revenue +50% y/y, but only 13% off high (needs 25%)"
+ },
+ {
+  "symbol": "ANET",
+  "name": "Arista Networks",
+  "segment": "Networking & optics",
+  "off_high": -0.1253,
+  "reason": "Revenue +38% y/y, but only 13% off high (needs 25%)"
+ },
+ {
+  "symbol": "ARM",
+  "name": "Arm Holdings",
+  "segment": "Semiconductors",
+  "off_high": -0.4897,
+  "reason": "No quarterly financials in feed (49% off high)"
+ },
+ {
+  "symbol": "ASML",
+  "name": "ASML Holding",
+  "segment": "Semicap equipment",
+  "off_high": -0.1717,
+  "reason": "No quarterly financials in feed (17% off high)"
+ },
+ {
+  "symbol": "CRWD",
+  "name": "CrowdStrike",
+  "segment": "Software & internet",
+  "off_high": -0.0576,
+  "reason": "Revenue +26% y/y, but only 6% off high (needs 25%)"
+ },
+ {
+  "symbol": "DDOG",
+  "name": "Datadog",
+  "segment": "Software & internet",
+  "off_high": -0.0693,
+  "reason": "Revenue +36% y/y, but only 6% off high (needs 25%)"
+ },
+ {
+  "symbol": "DELL",
+  "name": "Dell Technologies",
+  "segment": "AI cloud & servers",
+  "off_high": -0.1509,
+  "reason": "Revenue +58% y/y, but only 14% off high (needs 25%)"
+ },
+ {
+  "symbol": "ETN",
+  "name": "Eaton",
+  "segment": "Power & industrials",
+  "off_high": -0.1646,
+  "reason": "No quarterly financials in feed (17% off high)"
+ },
+ {
+  "symbol": "FN",
+  "name": "Fabrinet",
+  "segment": "Networking & optics",
+  "off_high": -0.5264,
+  "reason": "No quarterly financials in feed (53% off high)"
+ },
+ {
+  "symbol": "GEV",
+  "name": "GE Vernova",
+  "segment": "Power & industrials",
+  "off_high": -0.265,
+  "reason": "Revenue +27% y/y, but only 22% off high (needs 25%)"
+ },
+ {
+  "symbol": "HPE",
+  "name": "Hewlett Packard Enterprise",
+  "segment": "AI cloud & servers",
+  "off_high": -0.1544,
+  "reason": "Revenue +34% y/y, but only 16% off high (needs 25%)"
+ },
+ {
+  "symbol": "IREN",
+  "name": "IREN",
+  "segment": "AI cloud & servers",
+  "off_high": -0.6351,
+  "reason": "Revenue -24% y/y (mining wind-down ahead of AI cloud ramp)"
+ },
+ {
+  "symbol": "KLAC",
+  "name": "KLA",
+  "segment": "Semicap equipment",
+  "off_high": -0.4921,
+  "reason": "Revenue +15% y/y"
+ },
+ {
+  "symbol": "LITE",
+  "name": "Lumentum",
+  "segment": "Networking & optics",
+  "off_high": -0.2311,
+  "reason": "Revenue +109% y/y, but only 23% off high (needs 25%)"
+ },
+ {
+  "symbol": "MDB",
+  "name": "MongoDB",
+  "segment": "Software & internet",
+  "off_high": -0.1818,
+  "reason": "Revenue +30% y/y, but only 17% off high (needs 25%)"
+ },
+ {
+  "symbol": "MRVL",
+  "name": "Marvell Technology",
+  "segment": "Semiconductors",
+  "off_high": -0.2497,
+  "reason": "Revenue +37% y/y, but only 24.6% off high (needs 25%)"
+ },
+ {
+  "symbol": "MU",
+  "name": "Micron Technology",
+  "segment": "Memory & storage",
+  "off_high": -0.2335,
+  "reason": "Revenue +379% y/y, but only 23% off high (needs 25%)"
+ },
+ {
+  "symbol": "NET",
+  "name": "Cloudflare",
+  "segment": "Software & internet",
+  "off_high": -0.1085,
+  "reason": "Revenue +36% y/y, but only 11% off high (needs 25%)"
+ },
+ {
+  "symbol": "NOW",
+  "name": "ServiceNow",
+  "segment": "Software & internet",
+  "off_high": -0.2144,
+  "reason": "Revenue +24% y/y, but only 22% off high (needs 25%)"
+ },
+ {
+  "symbol": "NVDA",
+  "name": "NVIDIA",
+  "segment": "Semiconductors",
+  "off_high": -0.0961,
+  "reason": "Revenue +106% y/y, but only 10% off high (needs 25%)"
+ },
+ {
+  "symbol": "NVT",
+  "name": "nVent Electric",
+  "segment": "Power & industrials",
+  "off_high": -0.2301,
+  "reason": "No quarterly financials in feed (22% off high)"
+ },
+ {
+  "symbol": "PLTR",
+  "name": "Palantir",
+  "segment": "Software & internet",
+  "off_high": -0.074,
+  "reason": "Revenue +93% y/y, but only 7% off high (needs 25%)"
+ },
+ {
+  "symbol": "PWR",
+  "name": "Quanta Services",
+  "segment": "Power & industrials",
+  "off_high": -0.2393,
+  "reason": "Revenue +41% y/y, but only 24% off high (needs 25%)"
+ },
+ {
+  "symbol": "SNOW",
+  "name": "Snowflake",
+  "segment": "Software & internet",
+  "off_high": -0.1266,
+  "reason": "Revenue +35% y/y, but only 12% off high (needs 25%)"
+ },
+ {
+  "symbol": "TEM",
+  "name": "Tempus AI",
+  "segment": "Healthcare",
+  "off_high": -0.218,
+  "reason": "Revenue +22% y/y, but only 21% off high (needs 25%)"
+ },
+ {
+  "symbol": "TLN",
+  "name": "Talen Energy",
+  "segment": "Power & industrials",
+  "off_high": -0.2214,
+  "reason": "Revenue +19% y/y and only 23% off high"
+ },
+ {
+  "symbol": "TSM",
+  "name": "Taiwan Semiconductor",
+  "segment": "Semiconductors",
+  "off_high": -0.1012,
+  "reason": "No quarterly financials in feed (10% off high)"
+ },
+ {
+  "symbol": "VST",
+  "name": "Vistra",
+  "segment": "Power & industrials",
+  "off_high": -0.2636,
+  "reason": "Revenue -5% y/y"
+ },
+ {
+  "symbol": "AA",
+  "name": "Alcoa",
+  "segment": "Materials",
+  "off_high": -0.5271,
+  "reason": "Revenue +31% y/y is commodity-price driven; growth model does not fit"
+ },
+ {
+  "symbol": "ADBE",
+  "name": "Adobe",
+  "segment": "Software & internet",
+  "off_high": -0.326,
+  "reason": "Revenue +13% y/y"
+ },
+ {
+  "symbol": "ALB",
+  "name": "Albemarle",
+  "segment": "Materials",
+  "off_high": -0.5617,
+  "reason": "Revenue +31% y/y is lithium-price driven; growth model does not fit"
+ },
+ {
+  "symbol": "BX",
+  "name": "Blackstone",
+  "segment": "Financials",
+  "off_high": -0.2951,
+  "reason": "Revenue +36% y/y driven by lumpy performance revenues"
+ },
+ {
+  "symbol": "COIN",
+  "name": "Coinbase",
+  "segment": "Financials",
+  "off_high": -0.573,
+  "reason": "Revenue -19% y/y"
+ },
+ {
+  "symbol": "DKS",
+  "name": "Dick's Sporting Goods",
+  "segment": "Consumer",
+  "off_high": -0.423,
+  "reason": "Revenue +53% y/y is acquisition-driven (Foot Locker), not organic growth"
+ },
+ {
+  "symbol": "FIS",
+  "name": "Fidelity National Information Services",
+  "segment": "Financials",
+  "off_high": -0.4833,
+  "reason": "Revenue +29% y/y is acquisition-driven (issuer-processing deal), not organic growth"
+ },
+ {
+  "symbol": "FSLR",
+  "name": "First Solar",
+  "segment": "Power & industrials",
+  "off_high": -0.4592,
+  "reason": "Revenue -4% y/y"
+ },
+ {
+  "symbol": "HOOD",
+  "name": "Robinhood Markets",
+  "segment": "Financials",
+  "off_high": -0.4071,
+  "reason": "Revenue +12% y/y"
+ },
+ {
+  "symbol": "HUBS",
+  "name": "HubSpot",
+  "segment": "Software & internet",
+  "off_high": -0.5019,
+  "reason": "Revenue +19.8% y/y, just under 20%"
+ },
+ {
+  "symbol": "INTU",
+  "name": "Intuit",
+  "segment": "Software & internet",
+  "off_high": -0.5287,
+  "reason": "Revenue +14% y/y"
+ },
+ {
+  "symbol": "MCHP",
+  "name": "Microchip Technology",
+  "segment": "Semiconductors",
+  "off_high": -0.2477,
+  "reason": "Revenue +38% y/y, but only 24.9% off high (needs 25%)"
+ },
+ {
+  "symbol": "NFLX",
+  "name": "Netflix",
+  "segment": "Software & internet",
+  "off_high": -0.4696,
+  "reason": "Revenue +13% y/y"
+ },
+ {
+  "symbol": "NLY",
+  "name": "Annaly Capital",
+  "segment": "Financials",
+  "off_high": -0.2508,
+  "reason": "Revenue +28% y/y is mortgage-REIT interest income, not operating growth"
+ },
+ {
+  "symbol": "TEAM",
+  "name": "Atlassian",
+  "segment": "Software & internet",
+  "off_high": -0.0569,
+  "reason": "No quarterly financials in feed (6% off high)"
+ },
+ {
+  "symbol": "TPL",
+  "name": "Texas Pacific Land",
+  "segment": "Energy",
+  "off_high": -0.3925,
+  "reason": "Revenue +31% y/y, but land/royalty model with no gross margin or analyst data in feed"
+ },
+ {
+  "symbol": "UBER",
+  "name": "Uber",
+  "segment": "Software & internet",
+  "off_high": -0.3466,
+  "reason": "Revenue +12% y/y"
+ },
+ {
+  "symbol": "ZS",
+  "name": "Zscaler",
+  "segment": "Software & internet",
+  "off_high": -0.2292,
+  "reason": "Revenue +25% y/y, but only 23% off high (needs 25%)"
+ },
+ {
+  "symbol": "APLD",
+  "name": "Applied Digital",
+  "segment": "\u2014",
+  "off_high": -0.5961,
+  "reason": "Market cap $5.9B, under the $10B large-cap line (passes the growth screen)"
+ },
+ {
+  "symbol": "CORZ",
+  "name": "Core Scientific",
+  "segment": "\u2014",
+  "off_high": -0.5158,
+  "reason": "Market cap $4.6B, under the $10B large-cap line (passes the growth screen)"
+ },
+ {
+  "symbol": "AAOI",
+  "name": "Applied Optoelectronics",
+  "segment": "\u2014",
+  "off_high": -0.6608,
+  "reason": "Market cap $6.5B, under the $10B large-cap line (passes the growth screen)"
+ },
+ {
+  "symbol": "VIAV",
+  "name": "Viavi Solutions",
+  "segment": "\u2014",
+  "off_high": -0.4321,
+  "reason": "Market cap $8.2B, under the $10B large-cap line (passes the growth screen)"
+ },
+ {
+  "symbol": "MOD",
+  "name": "Modine",
+  "segment": "\u2014",
+  "off_high": -0.5561,
+  "reason": "Market cap $7.3B, under the $10B large-cap line (passes the growth screen)"
+ },
+ {
+  "symbol": "MP",
+  "name": "MP Materials",
+  "segment": "\u2014",
+  "off_high": -0.4595,
+  "reason": "Market cap $7.3B, under the $10B large-cap line (passes the growth screen)"
+ },
+ {
+  "symbol": "ALGM",
+  "name": "Allegro MicroSystems",
+  "segment": "\u2014",
+  "off_high": -0.5193,
+  "reason": "Market cap $6.3B, under the $10B large-cap line (passes the growth screen)"
+ },
+ {
+  "symbol": "BROS",
+  "name": "Dutch Bros",
+  "segment": "\u2014",
+  "off_high": -0.4387,
+  "reason": "Market cap $5.7B, under the $10B large-cap line (passes the growth screen)"
+ },
+ {
+  "symbol": "CAVA",
+  "name": "CAVA Group",
+  "segment": "\u2014",
+  "off_high": -0.4786,
+  "reason": "Market cap $6.1B, under the $10B large-cap line (passes the growth screen)"
+ }
+]
